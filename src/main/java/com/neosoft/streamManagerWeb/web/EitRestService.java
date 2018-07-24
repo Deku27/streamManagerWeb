@@ -86,6 +86,8 @@ public class EitRestService {
 	@RequestMapping(value ="/eit/{id}",method=RequestMethod.PUT)
 	public Eit save(@PathVariable Long id , @RequestBody Eit e ){
 		e.setIdeit(id);
+		Video v = videoRepository.findByFilename(e.getVideofile());
+		e.setVideo(v);
 		return eitRepository.save(e);
 	}
 }

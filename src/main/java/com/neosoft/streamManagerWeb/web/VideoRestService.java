@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.neosoft.streamManagerWeb.dao.EitRepository;
 import com.neosoft.streamManagerWeb.dao.VideoRepository;
+import com.neosoft.streamManagerWeb.entities.Eit;
 import com.neosoft.streamManagerWeb.entities.Video;
 
 import com.neosoft.streamManagerWeb.services.StorageService;
@@ -32,10 +34,15 @@ public class VideoRestService {
 	
 	StorageService storageService;
 	
+	@Autowired 
+	
+	EitRepository eitRepository;
+	
 	/**
 	 * this method returns the list of all videos,
 	 * @return the list of videos
 	 */
+	
 	@RequestMapping(value ="/videos",method=RequestMethod.GET)
 	public List<Video> getVideos(){
 		return videoRepository.findAll();
@@ -47,8 +54,8 @@ public class VideoRestService {
 	 * @return the list of videos
 	 */
 	
-	@RequestMapping(value ="/videos/{id}",method=RequestMethod.GET)
-	public Optional<Video> getVideo(@PathVariable   Long id){
+	@RequestMapping(value ="/video/{id}",method=RequestMethod.GET)
+	public Optional<Video> getVideo(@PathVariable Long id){
 		return videoRepository.findById(id);
 	}
 	
@@ -68,10 +75,19 @@ public class VideoRestService {
 	 * @param video id
 	 * @return true in case video has been successfully deleted
 	 */
+	
 	@RequestMapping(value ="/video/{id}",method=RequestMethod.DELETE)
-	public boolean delete(@PathVariable Long id ){
+	public List<Eit> delete(@PathVariable Long id ){
+		List<Eit> eits = new ArrayList<>();
+		Optional<Video> v = videoRepository.findById(id);
+		if(v.isPresent()) {
+			eits = eitRepository.findByVideofile(v.get().getFilename());
+			for (Eit eit : eits) {
+				eitRepository.delete(eit);
+			}
+		}
 		videoRepository.deleteById(id);
-		return true;
+		return eits;
 	}
 	
 	/**
