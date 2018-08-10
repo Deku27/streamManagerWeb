@@ -26,8 +26,6 @@ public class StreamManagerWebApplication implements CommandLineRunner {
 	@Autowired 
 	EitRepository eitRepository;
 	
-	
-	
 
 	public static void main(String[] args) {
 		SpringApplication.run(StreamManagerWebApplication.class, args);
